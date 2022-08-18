@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import useDebounce from './useDebounce';
 const API_ENDPOINT = `https://www.omdbapi.com/?apikey=${process.env.REACT_APP_MOVIE_API_KEY}`;
 
 const useFetch = (urlParams) => {
  const [isLoading, setIsLoading] = useState(true);
  const [error, setError] = useState({ show: false, msg: '' });
  const [data, setData] = useState(null);
+ const debouncedValue = useDebounce(urlParams, 500);
  const fetchMovies = async (url) => {
   setIsLoading(true);
   try {
@@ -25,8 +27,9 @@ const useFetch = (urlParams) => {
  };
 
  useEffect(() => {
-  fetchMovies(`${API_ENDPOINT}${urlParams}`);
- }, [urlParams]);
+  fetchMovies(`${API_ENDPOINT}${debouncedValue}`);
+ }, [debouncedValue]);
+
  return { isLoading, error, data };
 };
 
